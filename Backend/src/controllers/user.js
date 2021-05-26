@@ -1,4 +1,4 @@
-import UserSchama from '../models/UserSchama';
+import UserSchama from '../models/AlumnoSchama';
 
 export async function GETusers(req, res) {
   UserSchama.find()
