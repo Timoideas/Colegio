@@ -3,6 +3,10 @@ const routes = Router();
 
 import { Index, BadUrl } from '../controllers/controller';
 import {
+  GETComunicados,
+  POSTComunicado,
+} from '../controllers/ComunicadoController';
+import {
   GETDocente,
   GETDocentes,
   POSTDocente,
@@ -23,6 +27,7 @@ routes.route('/grupo/:id').get(GETGrupo).put(PUTGrupo);
 routes.route('/grupos').get(GETGrupos).post(POSTGrupo);
 routes.route('/docentes').get(GETDocentes).post(POSTDocente);
 routes.route('/docente/:id').put(PUTDocente);
+routes.route('/comunicados').get(GETComunicados).post(POSTComunicado);
 routes.route('/user').get(GETusers).post(POSTuser);
 
 routes.route('*').get(BadUrl);
