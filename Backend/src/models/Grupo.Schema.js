@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import validator from 'mongoose-unique-validator';
 import { Fecha } from '../libraries/Fecha';
 const GrupoSchema = new Schema({
-  name: { type: String, unique: true },
+  name: { type: String },
   horario: {
     lunes: [{ type: String }],
     martes: [{ type: String }],

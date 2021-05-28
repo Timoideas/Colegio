@@ -1,6 +1,5 @@
-import { TaskChannelContext } from 'twilio/lib/rest/taskrouter/v1/workspace/taskChannel';
 import { ValidateObject } from '../libraries/Validate';
-import ComuinicadoSchema from '../models/ComuinicadoSchema';
+import ComuinicadoSchema from '../models/Comunicado.Schema';
 
 export async function GETComunicados(req, res) {
   try {
@@ -18,6 +17,7 @@ export async function POSTComunicado(req, res) {
     res.status(200).json({ ok: false, message });
   }
 }
+ComuinicadoSchema.findById;
 export async function PUTComunicado(req, res) {
   const body = req.body;
   res.status(200).json({ ok: true, body });

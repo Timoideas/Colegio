@@ -1,34 +1,65 @@
-import UserSchama from '../models/AlumnoSchama';
+import { ValidateObject } from '../libraries/Validate';
+import AlumnoSchema from '../models/Alumno.Schema';
+import GrupoSchema from '../models/Grupo.Schema';
 
-export async function GETusers(req, res) {
-  UserSchama.find()
-    .then((users) => res.status(200).json({ ok: true, users }))
-    .catch((err) => res.status(200).json({ ok: false, err }));
+export async function GETAlumnos(req, res) {
+  try {
+    const AlumnoDB = await AlumnoSchema.find();
+    res.status(200).json({ ok: true, data: AlumnoDB });
+  } catch ({ message }) {
+    res.status(200).json({ ok: false, message });
+  }
 }
-export async function GETuser(req, res) {
-  const id = req.params.id;
-  UserSchama.findOne({ username: id.toLowerCase() })
-    .then((user) => res.status(200).json({ ok: true, user }))
-    .catch((err) => res.status(200).json({ ok: false, err }));
+export async function GETAlumno(req, res) {
+  try {
+    const { id } = req.params;
+    const AlumnoDB = await AlumnoSchema.findById(id);
+    res.status(200).json({ ok: true, data: AlumnoDB });
+  } catch ({ message }) {
+    res.status(200).json({ ok: false, message });
+  }
 }
-export async function POSTuser(req, res) {
-  let { name, username } = req.body;
-  const user = new UserSchama({
-    name: name.toLowerCase(),
-    username: username.toLowerCase(),
-  });
-  user
-    .save()
-    .then((user) => res.status(200).json({ ok: true, user }))
-    .catch((err) => res.status(200).json({ ok: false, err }));
+export async function POSTAlumno(req, res) {
+  try {
+    const body = await ValidateObject(req.body, [
+      'name',
+      'lastname',
+      'grupo',
+      'username',
+      'password',
+    ]);
+    const Alumno = new AlumnoSchema(body);
+    const AlumnoDB = await Alumno.save();
+    await GrupoSchema.findByIdAndUpdate(
+      { _id: body.grupo },
+      { $push: { alumnos: AlumnoDB._id } }
+    );
+    res.status(200).json({ ok: true, data: AlumnoDB });
+  } catch ({ message }) {
+    res.status(200).json({ ok: false, message });
+  }
 }
-export async function PUTuser(req, res) {
-  const body = req.body;
-  res.status(200).json({ ok: true, body });
+export async function PUTAlumno(req, res) {
+  try {
+    const { id } = req.params;
+    const body = await ValidateObject(req.body, [
+      'name',
+      'lastname',
+      'grupo',
+      'username',
+      'password',
+    ]);
+    const Alumno = await AlumnoSchema.findOneAndUpdate({ _id: id }, body, {
+      new: true,
+    });
+    res.status(200).json({ ok: true, data: Alumno });
+  } catch ({ message }) {
+    res.status(200).json({ ok: false, message });
+  }
 }
-export async function DELETEuser(req, res) {
+export async function DELETEAlumno(req, res) {
   const { id } = req.body;
-  UserSchama.findByIdAndDelete(id, (err, data) => {
+  AlumnoSchema.findByIdAndDelete(id, (err, data) => {
     if (err || !data) return res.status(200).json({ ok: false, incorrect: id });
     res.status(200).json({ ok: true, data });
   });

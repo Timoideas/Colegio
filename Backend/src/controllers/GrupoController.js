@@ -1,11 +1,11 @@
 import { ValidateObject } from '../libraries/Validate';
-import GrupoSchema from '../models/GrupoSchema';
+import GrupoSchema from '../models/Grupo.Schema';
 
-export async function GETGrupo(_, res) {
+export async function GETGrupo(req, res) {
   try {
-    const { name } = req.params;
-    const grupos = await GrupoSchema.findOne({ name });
-    res.status(200).json({ ok: true, grupos });
+    const { id } = req.params;
+    const grupo = await GrupoSchema.findOne({ name: id });
+    res.status(200).json({ ok: true, grupo });
   } catch ({ message }) {
     res.status(200).json({ ok: false, message });
   }
@@ -36,13 +36,27 @@ export async function POSTGrupo(req, res) {
 export async function PUTGrupo(req, res) {
   try {
     const { id } = req.params;
-    const body = await ValidateObject(req.body, ['cursos', 'banner', 'name']);
-    body.name = body.name.toUpperCase();
-
-    const grupo = await GrupoSchema.findByIdAndUpdate(id, body, {
-      new: true,
-    });
-
+    const body = await ValidateObject(req.body, [
+      'cursos',
+      'banner',
+      'name',
+      'alumnos',
+    ]);
+    let grupo;
+    if (body.alumnos?.length) {
+      grupo = await GrupoSchema.findOneAndUpdate(
+        { name: id },
+        { $push: { alumnos: { $each: body.alumnos } } },
+        { new: true }
+      );
+    } else {
+      grupo = await GrupoSchema.findOneAndUpdate(
+        { name: id },
+        { $push: { alumnos: { $each: body.alumnos } } },
+        { new: true }
+      );
+    }
+    555;
     res.status(200).json({ ok: true, data: grupo });
   } catch ({ message }) {
     res.status(200).json({ ok: false, message });
